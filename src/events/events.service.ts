@@ -1,16 +1,20 @@
-import { Injectable, NotFoundException } from "@nestjs/common"
-import { CreateEventDto } from "./dtos/create-event.dto"
-import { UpdateEventDto } from "./dtos/update-event.dto"
-import { PrismaService } from "prisma/prisma.service"
-import { Event } from "@prisma/client"
+import { Injectable, NotFoundException } from '@nestjs/common'
+import { CreateEventDto } from './dtos/create-event.dto'
+import { UpdateEventDto } from './dtos/update-event.dto'
+import { PrismaService } from 'prisma/prisma.service'
+import { Event } from '@prisma/client'
 
 @Injectable()
 export class EventsService {
 	constructor(private readonly prismaService: PrismaService) {}
 
-	async create(dto: CreateEventDto): Promise<Event> {
+	async create(dto: CreateEventDto): Promise<Event> | null {
+		const event = await this.prismaService.event.findFirst({
+			where: { title: dto.title },
+		})
+		if (event) return null
 		const createdEvent = await this.prismaService.event.create({
-			data: dto
+			data: dto,
 		})
 
 		return createdEvent
@@ -25,7 +29,7 @@ export class EventsService {
 
 		const deletedTask = await this.prismaService.event.update({
 			where: { id },
-			data: dto
+			data: dto,
 		})
 
 		return deletedTask
@@ -35,7 +39,7 @@ export class EventsService {
 		await this.getOneOrThrow(id)
 
 		const deletedEvent = await this.prismaService.event.delete({
-			where: { id }
+			where: { id },
 		})
 
 		return deletedEvent
@@ -45,7 +49,7 @@ export class EventsService {
 		const event = await this.prismaService.event.findUnique({ where: { id } })
 
 		if (!event) {
-			throw new NotFoundException("Could not find any events")
+			throw new NotFoundException('Could not find any events')
 		}
 
 		return event

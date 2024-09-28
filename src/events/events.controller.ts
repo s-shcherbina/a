@@ -38,5 +38,4 @@ export class EventsController {
 	remove(@Param('id', ParseIntPipe) id: number) {
 		return this.eventsService.remove(id)
 	}
-	// remove(@Param("id", ParseIntPipe) id: number) {
 }

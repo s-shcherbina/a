@@ -33,7 +33,7 @@ model Participant {
   email       String
   dateOfBirth String @map("date_of_birth")
 
-  source SourceEnum @default(socialMedia)
+  source SourceEnum
 
   eventId Int
   event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
